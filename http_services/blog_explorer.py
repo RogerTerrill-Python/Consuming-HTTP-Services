@@ -33,16 +33,32 @@ def show_posts(posts):
         return
 
     print("--------------------------------- BLOG POSTS ------------------------------------")
-    max_width = max(len(f'{int(p.view_count):,}') for p in posts)
+    # Checks the number of characters in the view count to make a uniform list and uses the max
+    # By using list comprehension
+    # In this case the number is 5 because there are five characters in 1,231
+    max_character_width_for_view_count = max(len(f'{int(p.view_count):,}') for p in posts)
+
     for idx, p in enumerate(posts):
-        padded = ' ' * (max_width - len(f'{int(p.view_count):,}'))
-        print(f'{idx + 1}. {p.id} [{padded}{int(p.view_count):,}]: {p.title}')
+        # Padded pads the front to align view counts to the right
+        padding_in_front_of_view_count = ' ' * (max_character_width_for_view_count - len(f'{int(p.view_count):,}'))
+        print(f'{idx + 1}. {p.id} [{padding_in_front_of_view_count}{int(p.view_count):,}]: {p.title}')
     print()
 
 
 def get_posts():
-    print("TODO: GET POSTS")
-    return []
+    url = base_url + 'api/blog'
+    headers = {'Accept': 'application/json'}
+    resp = requests.get(url, headers=headers)
+
+    if resp.status_code != 200:
+        print(f"Error downloading posts: {resp.status_code} {resp.text}")
+        return []
+
+    return [
+        # Uses keyword arguments to fill in the namedtuple since it's 1 to 1
+        Post(**post)
+        for post in resp.json()
+    ]
 
 
 def add_post():
