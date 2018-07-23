@@ -91,7 +91,7 @@ def update_post():
     print()
 
     # Ask for post number and then insert into variable post
-    post = posts[int(input('number: '))-1]
+    post = posts[int(input('Enter number of post to edit: '))-1]
 
     # Enter new title or second line says if blank, then just reenter old title
     title = input('title: [' + post.title + '] ')
@@ -102,6 +102,17 @@ def update_post():
 
     view_count = input('view count: [' + str(post.view_count) + '] ')
     view_count = int(view_count if view_count else post.view_count)
+
+    post_data = dict(title=title, content=content, view_count=view_count, published=post.published)
+
+    url = base_url + 'api/blog/' + post.id
+    resp = requests.put(url, data=json.dumps(post_data))
+
+    if resp.status_code != 204:
+        print(f"Error updating post: {resp.status_code} {resp.text}")
+        return
+
+    print(f"Successfully updated {post.title}")
 
 
 def delete_post():
