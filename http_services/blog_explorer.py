@@ -56,6 +56,7 @@ def get_posts():
 
     return [
         # Uses keyword arguments to fill in the namedtuple since it's 1 to 1
+        # Converts the post json to dictionary arguments
         Post(**post)
         for post in resp.json()
     ]
@@ -65,7 +66,23 @@ def add_post():
     now = datetime.datetime.now()
     published_text = f'{now.year}-{str(now.month).zfill(2)}-{str(now.day).zfill(2)}'
 
-    print("TODO: ADD POST")
+    title = input('title: ')
+    content = input('content: ')
+    view_count = int(input('view count: '))
+
+    post_data = dict(title=title, content=content, view_count=view_count, published=published_text)
+    url = base_url + 'api/blog'
+    headers = {'content-type' : 'application/json'}
+
+    resp = requests.post(url, json=post_data, headers=headers)
+
+    if resp.status_code != 201:
+        print(f'Error creating posts: {resp.status_code} {resp.text}')
+        return
+
+    post = resp.json()
+    print("created this: ")
+    print(post)
 
 
 def update_post():
