@@ -72,9 +72,8 @@ def add_post():
 
     post_data = dict(title=title, content=content, view_count=view_count, published=published_text)
     url = base_url + 'api/blog'
-    headers = {'content-type' : 'application/json'}
 
-    resp = requests.post(url, json=post_data, headers=headers)
+    resp = requests.post(url, json=post_data)
 
     if resp.status_code != 201:
         print(f'Error creating posts: {resp.status_code} {resp.text}')
