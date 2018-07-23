@@ -90,7 +90,18 @@ def update_post():
     show_posts(posts)
     print()
 
-    print("TODO: UPDATE POST")
+    # Ask for post number and then insert into variable post
+    post = posts[int(input('number: '))-1]
+
+    # Enter new title or second line says if blank, then just reenter old title
+    title = input('title: [' + post.title + '] ')
+    title = title if title else post.title
+
+    content = input('content: [' + post.content + '] ')
+    content = content if content else post.content
+
+    view_count = input('view count: [' + str(post.view_count) + '] ')
+    view_count = int(view_count if view_count else post.view_count)
 
 
 def delete_post():
