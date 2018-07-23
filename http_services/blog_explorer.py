@@ -121,11 +121,18 @@ def delete_post():
     show_posts(posts)
     print()
 
-    post = posts[int(input('number: ')) - 1]
+    post = posts[int(input('number of post to delete: ')) - 1]
 
     print(f"Deleting {post.title}...")
 
-    print("TODO: DELETE POST")
+    url = base_url + 'api/blog/' + post.id
+    resp = requests.delete(url)
+
+    if resp.status_code != 202:
+        print(f'Error deleting post: {resp.status_code} {resp.text}')
+        return
+
+    print(f"Deleted {post.title}")
 
 
 if __name__ == '__main__':
