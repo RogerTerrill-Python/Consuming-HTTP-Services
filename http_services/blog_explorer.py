@@ -116,6 +116,15 @@ def update_post():
 
 
 def delete_post():
+    print("To delete a post, choose the number from the list below:")
+    posts = get_posts()
+    show_posts(posts)
+    print()
+
+    post = posts[int(input('number: ')) - 1]
+
+    print(f"Deleting {post.title}...")
+
     print("TODO: DELETE POST")
 
 
