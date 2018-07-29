@@ -7,6 +7,9 @@ Post = collections.namedtuple("Post", 'id title content published view_count')
 
 base_url = 'http://consumer_services_api.talkpython.fm/api/restricted/blog/'
 
+user = 'kennedy'
+password = 'super_lockdown'
+
 
 def main():
     print("Blog explorer (requests version with auth)")
@@ -48,7 +51,7 @@ def show_posts(posts):
 def get_posts():
     url = base_url
     headers = {'Accept': 'application/json'}
-    resp = requests.get(url, headers=headers)
+    resp = requests.get(url, headers=headers, auth=(user, password))
 
     if resp.status_code != 200:
         print(f"Error downloading posts: {resp.status_code} {resp.text}")
@@ -71,9 +74,9 @@ def add_post():
     view_count = int(input('view count: '))
 
     post_data = dict(title=title, content=content, view_count=view_count, published=published_text)
-    url = base_url + 'api/blog'
+    url = base_url
 
-    resp = requests.post(url, json=post_data)
+    resp = requests.post(url, json=post_data, auth=(user, password))
 
     if resp.status_code != 201:
         print(f'Error creating posts: {resp.status_code} {resp.text}')
@@ -105,8 +108,8 @@ def update_post():
 
     post_data = dict(title=title, content=content, view_count=view_count, published=post.published)
 
-    url = base_url + 'api/blog/' + post.id
-    resp = requests.put(url, data=json.dumps(post_data))
+    url = base_url + post.id
+    resp = requests.put(url, data=json.dumps(post_data), auth=(user, password))
 
     if resp.status_code != 204:
         print(f"Error updating post: {resp.status_code} {resp.text}")
@@ -125,8 +128,8 @@ def delete_post():
 
     print(f"Deleting {post.title}...")
 
-    url = base_url + 'api/blog/' + post.id
-    resp = requests.delete(url)
+    url = base_url + post.id
+    resp = requests.delete(url, auth=(user, password))
 
     if resp.status_code != 202:
         print(f'Error deleting post: {resp.status_code} {resp.text}')
