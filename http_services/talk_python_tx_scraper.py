@@ -1,7 +1,7 @@
-from requests_html import HTMLSession
+import requests_html
 from xml.etree import ElementTree
 import collections
-session = HTMLSession()
+session = requests_html.HTMLSession()
 
 Page = collections.namedtuple('Page', 'url title paragraphs')
 Paragraph = collections.namedtuple('Paragraph', 'text seconds')
@@ -9,7 +9,7 @@ Paragraph = collections.namedtuple('Paragraph', 'text seconds')
 
 def main():
     tx_urls = get_transcripts_urls()
-    pages = download_transcript_pages(tx_urls[:5])
+    pages = download_transcript_pages(tx_urls[:1])
     print(pages)
 
 
@@ -24,8 +24,18 @@ def download_transcript_pages(tx_urls):
 
 
 def build_page_from_url(url):
+    print(f"Downloading {url}", flush=True)
     response = session.get(url)
-    html = response.text
+    h1_element = response.html.find('h1', first=True)
+    title = clean_line(h1_element.text)
+
+    paragraphs = [
+        Paragraph(clean_line(p.text), p.attrs["seconds"])
+        for p in response.html.find('.transcript-segment')
+    ]
+
+    print(paragraphs)
+
 
 
 def get_transcripts_urls():
@@ -46,6 +56,15 @@ def get_transcripts_urls():
     ]
 
     return tx_urls
+
+
+def clean_line(text):
+    text = text.replace('\n', ' ').replace('\t', ' ')
+    size = len(text) + 1
+    while size > len(text):
+        size = len(text)
+        text = text.replace('  ', ' ')
+    return text.strip()
 
 
 if __name__ == '__main__':
